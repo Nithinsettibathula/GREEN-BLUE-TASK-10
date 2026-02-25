@@ -1,4 +1,4 @@
-# --- Security Group for ALB ---
+# --- ALB Security Group ---
 resource "aws_security_group" "alb_sg" {
   name        = "${var.resource_prefix}-alb-sg"
   vpc_id      = var.vpc_id
@@ -27,7 +27,7 @@ resource "aws_lb" "main" {
   subnets            = var.public_subnets
 }
 
-# --- HTTP Listener ---
+# --- ALB Listeners ---
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.main.arn
   port              = "80"
@@ -39,15 +39,16 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-# --- Target Groups (Blue and Green) ---
+# --- Target Groups (Blue & Green) ---
 resource "aws_lb_target_group" "blue" {
   name        = "${var.resource_prefix}-tg-blue"
   port        = 1337
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
   target_type = "ip"
+
   health_check {
-    path = "/admin"
+    path = "/_health"
   }
 }
 
@@ -57,18 +58,19 @@ resource "aws_lb_target_group" "green" {
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
   target_type = "ip"
+
   health_check {
-    path = "/admin"
+    path = "/_health"
   }
 }
 
-# --- VPC Endpoints (Required for Private Subnet ECR Pull) ---
+# --- VPC Endpoints (COMMENTED OUT TO AVOID CONFLICTS) ---
+/*
 resource "aws_vpc_endpoint" "ecr_api" {
   vpc_id              = var.vpc_id
   service_name        = "com.amazonaws.us-east-1.ecr.api"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = var.private_subnets
-  security_group_ids  = [aws_security_group.alb_sg.id]
   private_dns_enabled = true
 }
 
@@ -77,12 +79,6 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
   service_name        = "com.amazonaws.us-east-1.ecr.dkr"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = var.private_subnets
-  security_group_ids  = [aws_security_group.alb_sg.id]
   private_dns_enabled = true
 }
-
-resource "aws_vpc_endpoint" "s3" {
-  vpc_id            = var.vpc_id
-  service_name      = "com.amazonaws.us-east-1.s3"
-  vpc_endpoint_type = "Gateway"
-}
+*/

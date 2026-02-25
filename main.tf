@@ -1,3 +1,5 @@
+# --- 1. Networking Module ---
+# Provisions the VPC infrastructure, ALB, and Target Groups
 module "networking" {
   source          = "./modules/networking"
   resource_prefix = var.resource_prefix
@@ -6,11 +8,26 @@ module "networking" {
   private_subnets = var.private_subnets
 }
 
+# --- 2. ECR Module ---
+# Creates the Docker repository for your Strapi images
 module "ecr" {
   source          = "./modules/ecr"
   resource_prefix = var.resource_prefix
 }
 
+# --- 3. RDS Module ---
+# Creates the PostgreSQL database
+module "rds" {
+  source          = "./modules/rds"
+  resource_prefix = var.resource_prefix
+  vpc_id          = var.vpc_id
+  private_subnets = var.private_subnets
+  db_password     = var.db_password
+  ecs_sg_id       = module.ecs.ecs_sg_id 
+}
+
+# --- 4. ECS Module ---
+# Manages the Fargate Cluster and Service
 module "ecs" {
   source             = "./modules/ecs"
   resource_prefix    = var.resource_prefix
@@ -26,15 +43,9 @@ module "ecs" {
   ecr_repository_url = module.ecr.repository_url
 }
 
-module "rds" {
-  source          = "./modules/rds"
-  resource_prefix = var.resource_prefix
-  vpc_id          = var.vpc_id
-  private_subnets = var.private_subnets
-  db_password     = var.db_password
-  ecs_sg_id       = module.ecs.ecs_sg_id 
-}
-
+# --- 5. CodeDeploy Module ---
+# Handles Blue/Green traffic shifting between Target Groups
+# Uses the team-provided 'codedeploy_role'
 module "codedeploy" {
   source                  = "./modules/codedeploy"
   resource_prefix         = var.resource_prefix
