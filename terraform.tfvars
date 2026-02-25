@@ -1,9 +1,9 @@
 # --- VPC ID ---
 vpc_id          = "vpc-0f3178e30a512ece3"
 
-# --- UPDATED Unique Prefix ---
-# Changing this to v2 avoids "Already Exists" errors
-resource_prefix = "nithin-strapi-gb-v2"
+# --- NEW Unique Prefix ---
+# Moving to v3 ensures GitHub Actions creates brand-new resources
+resource_prefix = "nithin-strapi-gb-v3"
 
 # --- Subnet IDs ---
 public_subnets  = [
