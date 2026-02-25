@@ -7,4 +7,9 @@ variable "blue_tg_arn" {}
 variable "db_host" {}
 variable "db_username" {}
 variable "db_password" {}
-variable "ecr_repository_url" {} # Ensure this is here!
+variable "ecr_repository_url" {}
+
+# Add this missing block
+variable "public_subnets" {
+  type = list(string)
+}
