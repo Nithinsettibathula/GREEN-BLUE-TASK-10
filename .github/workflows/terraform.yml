@@ -18,29 +18,33 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # --- STEP 1: LOGIN TO ECR ---
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      # --- STEP 2: BUILD AND PUSH THE STRAPI IMAGE ---
-      - name: Build, tag, and push image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          # MATCHES v3 PREFIX
-          ECR_REPOSITORY: nithin-strapi-gb-v3-repo 
-          IMAGE_TAG: latest
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-      # --- STEP 3: TERRAFORM DEPLOYMENT ---
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Apply
-        # GitHub will now create the v3 infrastructure and deploy the image
+      # --- STEP 1: CREATE ECR REPO FIRST ---
+      # This ensures the repository exists before the Docker push starts
+      - name: Create ECR Repository
+        run: terraform apply -target=module.ecr -auto-approve
+
+      # --- STEP 2: LOGIN TO ECR ---
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      # --- STEP 3: BUILD AND PUSH THE STRAPI IMAGE ---
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: nithin-strapi-gb-v3-repo 
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      # --- STEP 4: COMPLETE INFRASTRUCTURE DEPLOYMENT ---
+      # This builds the RDS, ECS, and ALB now that the image is ready
+      - name: Terraform Apply Full
         run: terraform apply -auto-approve
