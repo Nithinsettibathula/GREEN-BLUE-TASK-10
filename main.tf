@@ -15,18 +15,9 @@ module "ecr" {
   resource_prefix = var.resource_prefix
 }
 
-# --- 3. RDS Module ---
-# Provisions the PostgreSQL database in the private subnets
-module "rds" {
-  source          = "./modules/rds"
-  resource_prefix = var.resource_prefix
-  vpc_id          = var.vpc_id
-  private_subnets = var.private_subnets
-  db_password     = var.db_password
-}
-
-# --- 4. ECS Module ---
-# Manages the Fargate Cluster, Task Definition, and Service
+# --- 3. ECS Module ---
+# Manages the Fargate Cluster and Service. 
+# We call this BEFORE RDS so we can pass its Security Group ID to the database.
 module "ecs" {
   source             = "./modules/ecs"
   resource_prefix    = var.resource_prefix
@@ -40,6 +31,18 @@ module "ecs" {
   db_username        = "postgres"
   db_password        = var.db_password
   ecr_repository_url = module.ecr.repository_url
+}
+
+# --- 4. RDS Module ---
+# Provisions the PostgreSQL database.
+# Now includes the ecs_sg_id to allow container traffic.
+module "rds" {
+  source          = "./modules/rds"
+  resource_prefix = var.resource_prefix
+  vpc_id          = var.vpc_id
+  private_subnets = var.private_subnets
+  db_password     = var.db_password
+  ecs_sg_id       = module.ecs.ecs_sg_id 
 }
 
 # --- 5. CodeDeploy Module ---
