@@ -1,11 +1,10 @@
-variable "vpc_id" {
-  type = string
-}
+variable "resource_prefix" {}
+variable "vpc_id" {}
 
 variable "public_subnets" {
   type = list(string)
 }
 
-variable "resource_prefix" {
-  type = string
+variable "private_subnets" {
+  type = list(string)
 }
