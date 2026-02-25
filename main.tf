@@ -1,5 +1,5 @@
 # --- 1. Networking Module ---
-# Creates ALB, Target Groups, and VPC Endpoints for private ECR access
+# Creates the VPC Endpoints (for ECR/S3), ALB, and Target Groups
 module "networking" {
   source          = "./modules/networking"
   resource_prefix = var.resource_prefix
@@ -9,14 +9,14 @@ module "networking" {
 }
 
 # --- 2. ECR Module ---
-# Creates the repository to store your Strapi Docker images
+# Creates the repository for your Strapi Docker images
 module "ecr" {
   source          = "./modules/ecr"
   resource_prefix = var.resource_prefix
 }
 
 # --- 3. RDS Module ---
-# Provisions the PostgreSQL database in the private subnets
+# Sets up the PostgreSQL database in private subnets
 module "rds" {
   source          = "./modules/rds"
   resource_prefix = var.resource_prefix
@@ -26,7 +26,7 @@ module "rds" {
 }
 
 # --- 4. ECS Module ---
-# Manages the Fargate Cluster, Task Definition, and Service
+# Deploys the Fargate cluster and service with your Strapi container
 module "ecs" {
   source             = "./modules/ecs"
   resource_prefix    = var.resource_prefix
@@ -43,7 +43,7 @@ module "ecs" {
 }
 
 # --- 5. CodeDeploy Module ---
-# Handles the Blue/Green traffic shifting logic
+# Manages the Blue/Green traffic shifting
 module "codedeploy" {
   source              = "./modules/codedeploy"
   resource_prefix     = var.resource_prefix
@@ -52,7 +52,7 @@ module "codedeploy" {
   ecs_service_name    = module.ecs.service_name
   alb_listener_arn    = module.networking.listener_arn
   
-  # Crucial: These names must match modules/codedeploy/variables.tf
+  # Names must match the variables in modules/codedeploy/variables.tf
   blue_target_group_name  = module.networking.blue_tg_name
   green_target_group_name = module.networking.green_tg_name
 }
