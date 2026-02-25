@@ -1,5 +1,3 @@
-# --- 1. Networking Module ---
-# Creates ALB, Target Groups, and VPC Endpoints for private ECR access
 module "networking" {
   source          = "./modules/networking"
   resource_prefix = var.resource_prefix
@@ -8,16 +6,11 @@ module "networking" {
   private_subnets = var.private_subnets
 }
 
-# --- 2. ECR Module ---
-# Creates the repository to store your Strapi Docker images
 module "ecr" {
   source          = "./modules/ecr"
   resource_prefix = var.resource_prefix
 }
 
-# --- 3. ECS Module ---
-# Manages the Fargate Cluster and Service. 
-# We call this BEFORE RDS so we can pass its Security Group ID to the database.
 module "ecs" {
   source             = "./modules/ecs"
   resource_prefix    = var.resource_prefix
@@ -33,9 +26,6 @@ module "ecs" {
   ecr_repository_url = module.ecr.repository_url
 }
 
-# --- 4. RDS Module ---
-# Provisions the PostgreSQL database.
-# Now includes the ecs_sg_id to allow container traffic.
 module "rds" {
   source          = "./modules/rds"
   resource_prefix = var.resource_prefix
@@ -45,8 +35,6 @@ module "rds" {
   ecs_sg_id       = module.ecs.ecs_sg_id 
 }
 
-# --- 5. CodeDeploy Module ---
-# Handles the Blue/Green traffic shifting logic
 module "codedeploy" {
   source                  = "./modules/codedeploy"
   resource_prefix         = var.resource_prefix

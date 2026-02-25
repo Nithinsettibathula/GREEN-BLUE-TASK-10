@@ -1,11 +1,11 @@
-variable "resource_prefix" { type = string }
-variable "vpc_id" { type = string }
+variable "resource_prefix" {}
+variable "vpc_id" {}
 variable "public_subnets" { type = list(string) }
 variable "private_subnets" { type = list(string) }
-variable "execution_role_arn" { type = string }
-variable "alb_sg_id" { type = string }
-variable "blue_tg_arn" { type = string }
-variable "db_host" { type = string }
-variable "db_username" { type = string }
-variable "db_password" { type = string }
-variable "ecr_repository_url" { type = string }
+variable "execution_role_arn" {}
+variable "alb_sg_id" {}
+variable "blue_tg_arn" {}
+variable "db_host" {}
+variable "db_username" {}
+variable "db_password" {}
+variable "ecr_repository_url" {}
