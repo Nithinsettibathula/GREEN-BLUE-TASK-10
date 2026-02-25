@@ -27,7 +27,8 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: nithin-strapi-gb-repo 
+          # UPDATED: This must match your v2 resource_prefix + "-repo"
+          ECR_REPOSITORY: nithin-strapi-gb-v2-repo 
           IMAGE_TAG: latest
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
@@ -41,5 +42,5 @@ jobs:
         run: terraform init
 
       - name: Terraform Apply
-        # This will update the ECS Task Definition to use the image we just pushed
+        # This will update the ECS Task Definition to use the new image
         run: terraform apply -auto-approve
