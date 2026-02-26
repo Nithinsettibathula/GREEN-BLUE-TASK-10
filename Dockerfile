@@ -11,6 +11,11 @@ ENV NODE_ENV=production
 WORKDIR /opt/
 COPY package.json package-lock.json ./
 RUN npm install --only=production
+
+# --- CRITICAL FIX: Explicitly install the PostgreSQL driver ---
+RUN npm install pg --save
+# --------------------------------------------------------------
+
 ENV PATH /opt/node_modules/.bin:$PATH
 
 # Copy application code and build
