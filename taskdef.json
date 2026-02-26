@@ -23,13 +23,20 @@
                 { "name": "DATABASE_PASSWORD", "value": "YourSecurePassword123!" },
                 { "name": "DATABASE_SSL", "value": "false" },
                 { "name": "DATABASE_CLIENT", "value": "postgres" },
-                
                 { "name": "APP_KEYS", "value": "mySecretKey1,mySecretKey2" },
                 { "name": "API_TOKEN_SALT", "value": "myApiTokenSalt" },
                 { "name": "ADMIN_JWT_SECRET", "value": "myAdminJwtSecret" },
                 { "name": "TRANSFER_TOKEN_SALT", "value": "myTransferTokenSalt" },
                 { "name": "JWT_SECRET", "value": "myJwtSecret" }
-            ]
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/nithin-strapi-final-v13",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
         }
     ],
     "requiresCompatibilities": ["FARGATE"],
