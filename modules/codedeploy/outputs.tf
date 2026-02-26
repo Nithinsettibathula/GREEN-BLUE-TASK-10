@@ -1,14 +1,8 @@
+
 output "app_name" {
-  description = "The name of the CodeDeploy application"
-  value       = aws_codedeploy_app.main.name
+  value = aws_codedeploy_app.main.name
 }
 
 output "deployment_group_name" {
-  description = "The name of the CodeDeploy deployment group"
-  value       = aws_codedeploy_deployment_group.main.deployment_group_name
-}
-
-output "deployment_group_id" {
-  description = "The ID of the CodeDeploy deployment group"
-  value       = aws_codedeploy_deployment_group.main.deployment_group_id
+  value = aws_codedeploy_deployment_group.main.deployment_group_name
 }

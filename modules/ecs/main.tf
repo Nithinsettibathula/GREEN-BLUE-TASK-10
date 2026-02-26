@@ -1,3 +1,4 @@
+
 # --- ECS Cluster ---
 resource "aws_ecs_cluster" "main" {
   name = "${var.resource_prefix}-cluster"
@@ -56,7 +57,7 @@ resource "aws_security_group" "ecs_sg" {
   }
 }
 
-# --- ECS Service (Configured for Public Access to pull images) ---
+# --- ECS Service ---
 resource "aws_ecs_service" "main" {
   name            = "${var.resource_prefix}-service"
   cluster         = aws_ecs_cluster.main.id
@@ -64,12 +65,14 @@ resource "aws_ecs_service" "main" {
   launch_type     = "FARGATE"
   desired_count   = 1
 
+  # FIX: Give Strapi 120 seconds to start before health checks begin
+  health_check_grace_period_seconds = 120 
+
   deployment_controller {
     type = "CODE_DEPLOY"
   }
 
   network_configuration {
-    # Tasks are in public subnets with Public IP enabled to reach ECR
     subnets          = var.public_subnets 
     security_groups  = [aws_security_group.ecs_sg.id]
     assign_public_ip = true 
@@ -87,21 +90,4 @@ resource "aws_ecs_service" "main" {
       task_definition,
     ]
   }
-}
-
-# --- MODULE OUTPUTS (Required by main.tf and CodeDeploy) ---
-
-output "cluster_name" {
-  description = "The name of the ECS cluster"
-  value       = aws_ecs_cluster.main.name
-}
-
-output "service_name" {
-  description = "The name of the ECS service"
-  value       = aws_ecs_service.main.name
-}
-
-output "ecs_sg_id" {
-  description = "The ID of the ECS security group"
-  value       = aws_security_group.ecs_sg.id
 }

@@ -1,3 +1,5 @@
+
+
 resource "aws_codedeploy_app" "main" {
   name             = "${var.resource_prefix}-app"
   compute_platform = "ECS"
@@ -7,7 +9,9 @@ resource "aws_codedeploy_deployment_group" "main" {
   app_name               = aws_codedeploy_app.main.name
   deployment_group_name  = "${var.resource_prefix}-dg"
   service_role_arn       = var.codedeploy_role_arn
-  deployment_config_name = "CodeDeployDefault.ECSCanary10Percent5Minutes"
+  
+  # FIX: Faster deployment for testing (Canary is too slow for debugging)
+  deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
 
   blue_green_deployment_config {
     deployment_ready_option {
@@ -15,7 +19,7 @@ resource "aws_codedeploy_deployment_group" "main" {
     }
     terminate_blue_instances_on_deployment_success {
       action                           = "TERMINATE"
-      termination_wait_time_in_minutes = 5
+      termination_wait_time_in_minutes = 0 # FIX: Terminate immediately after success
     }
   }
 

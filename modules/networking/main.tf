@@ -1,3 +1,5 @@
+
+
 # --- ALB Security Group ---
 resource "aws_security_group" "alb_sg" {
   name        = "${var.resource_prefix}-alb-sg"
@@ -48,7 +50,12 @@ resource "aws_lb_target_group" "blue" {
   target_type = "ip"
 
   health_check {
-    path = "/_health"
+    path                = "/_health"   # Strapi default health path
+    matcher             = "200-299"    # FIX: Accept 204 (No Content) which Strapi returns
+    interval            = 60           # FIX: Check less frequently (every 60s)
+    timeout             = 30           # FIX: Give it 30s to respond
+    healthy_threshold   = 2
+    unhealthy_threshold = 5
   }
 }
 
@@ -60,25 +67,12 @@ resource "aws_lb_target_group" "green" {
   target_type = "ip"
 
   health_check {
-    path = "/_health"
+    path                = "/_health"
+    matcher             = "200-299"    # FIX: Accept 204
+    interval            = 60
+    timeout             = 30
+    healthy_threshold   = 2
+    unhealthy_threshold = 5
   }
 }
 
-# --- VPC Endpoints (COMMENTED OUT TO AVOID CONFLICTS) ---
-/*
-resource "aws_vpc_endpoint" "ecr_api" {
-  vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.us-east-1.ecr.api"
-  vpc_endpoint_type   = "Interface"
-  subnet_ids          = var.private_subnets
-  private_dns_enabled = true
-}
-
-resource "aws_vpc_endpoint" "ecr_dkr" {
-  vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.us-east-1.ecr.dkr"
-  vpc_endpoint_type   = "Interface"
-  subnet_ids          = var.private_subnets
-  private_dns_enabled = true
-}
-*/

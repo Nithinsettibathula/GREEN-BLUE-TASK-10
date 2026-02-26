@@ -6,9 +6,10 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: nithin-strapi-final-v11-repo
-  ECS_SERVICE: nithin-strapi-final-v11-service
-  ECS_CLUSTER: nithin-strapi-final-v11-cluster
+  # UPDATED TO V12 RESOURCES
+  ECR_REPOSITORY: nithin-strapi-final-v12-repo
+  ECS_SERVICE: nithin-strapi-final-v12-service
+  ECS_CLUSTER: nithin-strapi-final-v12-cluster
   ECS_TASK_DEFINITION: taskdef.json
   CONTAINER_NAME: strapi
 
@@ -55,6 +56,7 @@ jobs:
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
+          # Make sure you have appspec.yaml in your repo root!
           codedeploy-appspec: appspec.yaml
-          codedeploy-application: nithin-strapi-final-v11-app
-          codedeploy-deployment-group: nithin-strapi-final-v11-dg
+          codedeploy-application: nithin-strapi-final-v12-app  
+          codedeploy-deployment-group: nithin-strapi-final-v12-dg

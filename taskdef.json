@@ -1,11 +1,11 @@
 {
-    "family": "nithin-strapi-final-v11-task",
+    "family": "nithin-strapi-final-v12-task",
     "networkMode": "awsvpc",
     "executionRoleArn": "arn:aws:iam::811738710312:role/ecs_fargate_taskRole",
     "containerDefinitions": [
         {
             "name": "strapi",
-            "image": "811738710312.dkr.ecr.us-east-1.amazonaws.com/nithin-strapi-final-v11-repo:latest",
+            "image": "<IMAGE1_NAME>",
             "essential": true,
             "portMappings": [
                 {
@@ -16,7 +16,7 @@
             ],
             "environment": [
                 { "name": "NODE_ENV", "value": "production" },
-                { "name": "DATABASE_HOST", "value": "nithin-strapi-final-v11-db.cibg8qw2kouc.us-east-1.rds.amazonaws.com" },
+                { "name": "DATABASE_HOST", "value": "nithin-strapi-final-v12-db.cibg8qw2kouc.us-east-1.rds.amazonaws.com" },
                 { "name": "DATABASE_PORT", "value": "5432" },
                 { "name": "DATABASE_NAME", "value": "strapi" },
                 { "name": "DATABASE_USERNAME", "value": "postgres" },
