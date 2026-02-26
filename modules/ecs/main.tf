@@ -1,3 +1,8 @@
+# --- CloudWatch Log Group (CRITICAL FIX) ---
+resource "aws_cloudwatch_log_group" "logs" {
+  name              = "/ecs/${var.resource_prefix}"
+  retention_in_days = 1
+}
 
 # --- ECS Cluster ---
 resource "aws_ecs_cluster" "main" {
@@ -9,8 +14,8 @@ resource "aws_ecs_task_definition" "app" {
   family                   = "${var.resource_prefix}-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "256"
-  memory                   = "512"
+  cpu                      = "512"   # Increased for Strapi
+  memory                   = "1024"  # Increased for Strapi
   execution_role_arn       = var.execution_role_arn
 
   container_definitions = jsonencode([
@@ -31,8 +36,20 @@ resource "aws_ecs_task_definition" "app" {
         { name = "DATABASE_NAME", value = "strapi" },
         { name = "DATABASE_USERNAME", value = var.db_username },
         { name = "DATABASE_PASSWORD", value = var.db_password },
+        { name = "DATABASE_SSL", value = "false" },
+        { name = "DATABASE_CLIENT", value = "postgres" },
         { name = "NODE_ENV", value = "production" }
       ]
+      
+      # --- LOGGING CONFIGURATION ---
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = aws_cloudwatch_log_group.logs.name
+          "awslogs-region"        = "us-east-1"
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
     }
   ])
 }
@@ -65,7 +82,7 @@ resource "aws_ecs_service" "main" {
   launch_type     = "FARGATE"
   desired_count   = 1
 
-  # FIX: Give Strapi 120 seconds to start before health checks begin
+  # Give Strapi 2 minutes to start before health checks
   health_check_grace_period_seconds = 120 
 
   deployment_controller {
