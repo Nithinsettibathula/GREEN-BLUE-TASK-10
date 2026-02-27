@@ -1,5 +1,5 @@
 {
-    "family": "nithin-strapi-final-v13-task",
+    "family": "nithin-strapi-final-v14-task",
     "networkMode": "awsvpc",
     "executionRoleArn": "arn:aws:iam::811738710312:role/ecs_fargate_taskRole",
     "containerDefinitions": [
@@ -16,7 +16,7 @@
             ],
             "environment": [
                 { "name": "NODE_ENV", "value": "production" },
-                { "name": "DATABASE_HOST", "value": "nithin-strapi-final-v13-db.cibg8qw2kouc.us-east-1.rds.amazonaws.com" },
+                { "name": "DATABASE_HOST", "value": "nithin-strapi-final-v14-db.cibg8qw2kouc.us-east-1.rds.amazonaws.com" },
                 { "name": "DATABASE_PORT", "value": "5432" },
                 { "name": "DATABASE_NAME", "value": "strapi" },
                 { "name": "DATABASE_USERNAME", "value": "postgres" },
@@ -33,7 +33,7 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/nithin-strapi-final-v13",
+                    "awslogs-group": "/ecs/nithin-strapi-final-v14",
                     "awslogs-region": "us-east-1",
                     "awslogs-stream-prefix": "ecs"
                 }
