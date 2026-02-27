@@ -33,7 +33,7 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/nithin-strapi-final-v14",
+                    "awslogs-group": "/ecs/nithin-strapi-final-v13",
                     "awslogs-region": "us-east-1",
                     "awslogs-stream-prefix": "ecs"
                 }
