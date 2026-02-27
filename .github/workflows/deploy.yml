@@ -6,9 +6,9 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: nithin-strapi-final-v13-repo
-  ECS_SERVICE: nithin-strapi-final-v13-service
-  ECS_CLUSTER: nithin-strapi-final-v13-cluster
+  ECR_REPOSITORY: nithin-strapi-final-v14-repo
+  ECS_SERVICE: nithin-strapi-final-v14-service
+  ECS_CLUSTER: nithin-strapi-final-v14-cluster
   ECS_TASK_DEFINITION: taskdef.json
   CONTAINER_NAME: strapi
 
@@ -63,5 +63,5 @@ jobs:
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
           codedeploy-appspec: appspec.yaml
-          codedeploy-application: nithin-strapi-final-v13-app  
-          codedeploy-deployment-group: nithin-strapi-final-v13-dg
+          codedeploy-application: nithin-strapi-final-v14-app  
+          codedeploy-deployment-group: nithin-strapi-final-v14-dg
